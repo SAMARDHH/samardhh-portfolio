@@ -1,6 +1,6 @@
 # 🚀 Samardhh Portfolio - Interactive 3D Solar System
 
-An interactive 3D portfolio website with a space/solar system theme, featuring animated planets, floating elements, and a built-in Space Shooter mini-game.
+An immersive 3D portfolio website with a space/solar system theme, featuring animated planets orbiting around a 3D avatar, stunning cosmic backgrounds, and a built-in Space Shooter mini-game.
 
 ![React](https://img.shields.io/badge/React-19.2.0-61DAFB?logo=react)
 ![Three.js](https://img.shields.io/badge/Three.js-0.160.0-000000?logo=three.js)
@@ -11,43 +11,41 @@ An interactive 3D portfolio website with a space/solar system theme, featuring a
 ## ✨ Features
 
 ### 🌌 Solar System Portfolio
-- **Interactive 3D Planets** - Click on orbiting planets to learn about different sections:
-  - 🌍 **About** - Personal introduction and highlights
-  - 🔴 **Experience** - Professional work history
-  - 🪐 **Skills** - Technical skills and tools
-  - 🎓 **Education** - Academic background
-- **Glowing Particle Orbit Rings** - Beautiful animated orbit lines made of glowing particle dots
-- **Animated 3D Sun** - Central sun with HTML overlay and glow effects
+- **Interactive 3D Planets** - Four planets orbiting in sync on a shared orbit:
+  - 🌍 **About** - Personal introduction, skills, and philosophy
+  - 🔴 **Experience** - Professional work history with design & dev contributions
+  - 🪐 **Skills** - Technical skills organized by category with core strengths
+  - 🎓 **Education** - Academic background with CGPA
+- **3D Avatar Center** - Animated 3D avatar at the center that rotates and floats
+- **Synchronized Planet Orbit** - All planets share one orbit with equal 90° spacing
 - **Floating Asteroids** - Decorative 3D asteroid models orbiting in the scene
-- **Corner Galaxies** - 3D galaxy models in top corners
-- **Alien Spaceships** - Animated UFOs with blinking eyes on both sides
-- **Bubble Effects** - Interactive bubbles that rise and pop with animation
+- **Bubble Effects** - Interactive bubbles that rise and pop when avatar is clicked
 - **Glowing 3D Stars** - Pulsing stars around the title
-- **Animated Hint Text** - Pulsing text with dashed border guiding users
+
+### 🌠 Enhanced Cosmic Background
+- **Nebula Clouds** - Four colorful animated nebulae (purple, blue, pink, teal)
+- **Multi-Layer Star Field** - 200+ stars across 3 layers with varied sizes and colors
+- **Shooting Stars** - Periodic meteors streaking across the screen
+- **Cosmic Dust Particles** - Tiny floating particles that drift slowly
+- **Center Glow** - Pulsing purple/gold glow behind the avatar
+- **Glowing Sun** - Mass of light effect in the top-right corner
+
+### 🎵 Interactive Controls
+- **Background Music** - Space ambient music with play/pause and volume controls
+- **Resume Download** - One-click PDF resume download button
+- **Contact Modal** - Beautiful modal with photo, roles, and contact links
 
 ### 🎮 Space Shooter Game
-- **3-Hit Asteroid Health System** - Asteroids require 3 hits to destroy, shrinking and glowing red as they take damage
-- **Protective Shield Layer** - Visual shield barrier at Y=3 that asteroids must pass
-- **Progressive Difficulty** - Spawn rate and asteroid speed increase over time
-- **Auto-Shooting** - Continuous firing with mouse/touch movement controls
-- **Realistic Asteroid Colors** - 8 different color palettes for variety
-- **Explosion Effects** - Visual feedback when asteroids are destroyed
+- **3-Hit Asteroid Health System** - Asteroids shrink and glow red as damaged
+- **Progressive Difficulty** - Speed increases over time
+- **Auto-Shooting** - Continuous firing with mouse/touch movement
 - **Score System** - Points for hits (5) and destroys (30)
-- **Immediate Asteroid Spawn** - 3 asteroids spawn immediately when game starts/restarts
 
 ### 📱 Responsive Design
-- **Mobile Optimized** - Adjusted planet sizes, orbit radii, and UI elements
-- **Small Mobile Support** - Extra adjustments for very small screens
+- **Mobile Optimized** - Adjusted sizes, positions, and layouts
+- **Small Mobile Support** - Extra adjustments for screens < 380px
 - **Touch Controls** - Full touch support for mobile gameplay
-- **Adaptive Layouts** - Different positioning for small mobile, mobile, and desktop
-
-### 🎨 Visual Effects
-- **Comet Cursor** - Custom animated cursor that follows mouse movement with particle trail
-- **Particle Background** - Floating particles in the background
-- **3D Rocket Model** - Animated rocket with exhaust flames
-- **Glow Effects** - Extensive use of CSS shadows and Three.js lights
-- **Smooth Animations** - React Three Fiber animation loops
-- **3D Modal Icons** - Custom 3D icons for each planet section (Person, Briefcase, Gear, Graduation Cap)
+- **Adaptive UI** - Different positioning for all screen sizes
 
 ---
 
@@ -98,21 +96,27 @@ npm run dev
 ```
 samardhh-portfolio/
 ├── public/
-│   └── models/               # 3D GLB models
-│       ├── avatar.glb        # 3D avatar model
-│       ├── astr.glb          # Asteroid model
-│       └── galaxy.glb        # Galaxy model
+│   ├── models/               # 3D GLB models
+│   │   ├── avatar.glb        # 3D avatar model
+│   │   └── astr.glb          # Asteroid model
+│   ├── audio/
+│   │   └── space-ambient.mp3 # Background music
+│   ├── resume/
+│   │   └── Samardhh_Resume.pdf
+│   └── sam.jpeg              # Profile photo
 ├── src/
 │   ├── components/
-│   │   ├── SolarSystem.jsx   # Main portfolio component (~2500 lines)
+│   │   ├── SolarSystem.jsx   # Main portfolio component (~2900 lines)
 │   │   ├── SpaceGame.jsx     # Asteroid shooter game (~720 lines)
+│   │   ├── BackgroundMusic.jsx # Music player controls
+│   │   ├── ResumeDownload.jsx  # Resume download button
 │   │   ├── ParticlesBackground.jsx
 │   │   ├── RocketModel.jsx
 │   │   └── CometCursor.jsx
 │   ├── assets/
 │   ├── App.jsx               # Root component with game state
 │   ├── App.css
-│   ├── index.css
+│   ├── index.css             # Global styles & animations
 │   └── main.jsx
 ├── index.html
 ├── package.json
@@ -129,15 +133,15 @@ The main portfolio component containing:
 
 | Section | Components |
 |---------|------------|
-| **Data Constants** | PLANETS array with content definitions |
-| **Model Loaders** | Singleton pattern for GLB assets (Avatar, Asteroid, Galaxy) |
+| **Constants** | PLANETS array, shared orbit/speed/size settings |
+| **Background** | Nebula clouds, star field (3 layers), shooting stars, cosmic dust |
+| **Model Loaders** | Singleton pattern for GLB assets (Avatar, Asteroid) |
 | **3D Icons** | PersonIcon, BriefcaseIcon, GearIcon, GraduationCapIcon |
-| **Avatar** | AvatarModel, ContactAvatar with rotation towards hovered buttons |
+| **Avatar** | CenterAvatar with rotation and floating animation |
 | **Modals** | SpaceModal with ModalStars, GalacticSpiral, ModalScene |
-| **Planet** | Orbiting planets with labels and glow effects |
-| **OrbitRing** | Particle-based glowing orbit lines (55-70 dots per ring) |
-| **Title3D** | 3D extruded "SAMARDHH" text |
-| **Decorative** | AlienSpaceship, CornerGalaxy, FloatingAsteroid, GlowingStar, Bubble |
+| **Planet** | Synchronized orbiting planets with labels and icons |
+| **Decorative** | FloatingAsteroid, GlowingStar, Bubble, Sun glow |
+| **UI Controls** | BackgroundMusic, ResumeDownload, Contact button |
 
 ### SpaceGame.jsx
 The mini-game component containing:
@@ -180,37 +184,37 @@ The mini-game component containing:
 ### Modify Planet Content
 Edit the `PLANETS` array in `SolarSystem.jsx`:
 ```javascript
+const SHARED_ORBIT_RADIUS = 5  // All planets share this orbit
+const SHARED_ORBIT_SPEED = 0.5  // Rotation speed
+const SHARED_PLANET_SIZE = 0.7  // Uniform planet size
+
 const PLANETS = [
   {
     id: 'about',
     title: 'About',
     color: '#5a9fd4',
-    orbitRadius: 3,
-    orbitSpeed: 0.5,
-    size: 0.7,
-    content: 'Short description',
+    orbitRadius: SHARED_ORBIT_RADIUS,
+    orbitSpeed: SHARED_ORBIT_SPEED,
+    size: SHARED_PLANET_SIZE,
     fullContent: {
       heading: 'About Me',
       description: 'Full description...',
-      highlights: ['Skill 1', 'Skill 2']
+      highlights: ['Skill 1', 'Skill 2'],
+      whatIDo: { design: [...], development: [...] },
+      philosophy: [...]
     }
   },
-  // ... more planets
+  // ... more planets (Experience, Skills, Education)
 ]
 ```
 
-### Adjust Game Difficulty
-In `SpaceGame.jsx`:
+### Adjust Avatar Size
 ```javascript
-// Speed settings
-const baseSpeed = 0.012 + Math.min(gameTime * 0.0003, 0.015)
-const speedVariation = 0.008 + Math.min(gameTime * 0.0002, 0.007)
-
-// Spawn interval (decreases over time)
-const spawnInterval = Math.max(1500 - gameTime * 30, 600)
-
-// Asteroid health
-health: 3  // Hits required to destroy
+const avatarScale = useMemo(() => {
+  if (isSmallMobile) return 2.0
+  if (isMobile) return 2.4
+  return 3.2
+}, [isMobile, isSmallMobile])
 ```
 
 ---
@@ -233,35 +237,41 @@ const adjustedSize = isMobile ? planet.size * 0.9 : planet.size
 
 ## 🔧 Key Implementation Details
 
-### Orbit Ring Particles
+### Synchronized Planet Orbits
 ```javascript
-// Generate glowing dot positions along orbit
-const dotCount = Math.floor(55 + radius * 2.5)
-for (let i = 0; i < dotCount; i++) {
-  const angle = (i / dotCount) * Math.PI * 2
-  positions.push(
-    Math.cos(angle) * radius,
-    0,
-    Math.sin(angle) * radius
-  )
-}
+// Shared time reference for synchronized orbit
+const sharedOrbitTime = { current: 0 }
+
+// Equal spacing: 0°, 90°, 180°, 270°
+const angleOffset = (planetIndex * Math.PI * 2) / 4
+
+// All planets update from same time reference
+const currentAngle = sharedOrbitTime.current + angleOffset
+groupRef.current.position.x = Math.cos(currentAngle) * adjustedOrbit
+groupRef.current.position.z = Math.sin(currentAngle) * adjustedOrbit
 ```
 
-### Asteroid Health System
+### Enhanced Background Layers
 ```javascript
-// Visual feedback based on health
-const scale = 0.7 + (health / 3) * 0.3  // Shrinks as damaged
-emissive={health < 3 ? '#ff4444' : asteroidColor.emissive}  // Red glow when hurt
+// Nebula clouds with floating animation
+<div style={{
+  background: 'radial-gradient(ellipse, rgba(138,43,226,0.15), transparent)',
+  filter: 'blur(60px)',
+  animation: 'nebulaFloat1 25s ease-in-out infinite'
+}} />
+
+// Multi-layer stars with varied colors and twinkle
+['#ffffff', '#b8d4ff', '#ffd4ff', '#ffffd4', '#d4ffff']
+
+// Shooting stars with streak effect
+animation: 'shootingStar 8-20s linear infinite'
 ```
 
-### Avatar Direction Following
+### Avatar Animation
 ```javascript
-// Turn avatar towards hovered button
-if (direction === 'left') {
-  targetRotation.current = -0.8  // Face contact button
-} else if (direction === 'right') {
-  targetRotation.current = 0.8   // Face game button
-}
+// Rotation and floating
+groupRef.current.rotation.y += hovered ? 0.02 : 0.008
+const floatOffset = Math.sin(elapsedTime * 0.5) * 0.1
 ```
 
 ---
@@ -274,9 +284,10 @@ MIT License - feel free to use this for your own portfolio!
 
 ## 👤 Author
 
-**Samardhh Reddy** - Product Designer & UI/UX Designer
+**Samardhh Reddy** - Product Designer • UX Designer • Frontend Developer • Full Stack Developer
 
 - 📧 Email: padalasamardhhreddy@gmail.com
+- 📱 Phone: +91 9652074072
 - 💼 LinkedIn: [linkedin.com/in/samardhh](https://www.linkedin.com/in/samardhh/)
 - 📍 Location: Hyderabad, India
 

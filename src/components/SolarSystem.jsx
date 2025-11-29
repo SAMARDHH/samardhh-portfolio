@@ -17,64 +17,95 @@ import { memo, useRef, useEffect, useState, useMemo, useCallback, Suspense } fro
 import { Canvas, useFrame } from '@react-three/fiber'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import * as THREE from 'three'
+import BackgroundMusic from './BackgroundMusic'
+import ResumeDownload from './ResumeDownload'
 
 // ============================================
 // CONSTANTS & DATA
 // ============================================
 
 // Planet data with realistic planet colors and detailed content
+const SHARED_ORBIT_RADIUS = 5  // All planets share this orbit
+const SHARED_ORBIT_SPEED = 0.5  // All planets move at same speed (increased)
+const SHARED_PLANET_SIZE = 0.7  // All planets same size
+
 const PLANETS = [
   { 
     id: 'about', 
     title: 'About', 
     color: '#5a9fd4',  // Earth-like blue
-    orbitRadius: 3,
-    orbitSpeed: 0.5,
+    orbitRadius: SHARED_ORBIT_RADIUS,
+    orbitSpeed: SHARED_ORBIT_SPEED,
     selfRotation: 0.01,
     size: 0.7,
-    startAngle: 0,  // Starting position on orbit
-    content: 'Product Designer & UI/UX Designer with engineering background',
+    startAngle: 0,  // 0 degrees
+    content: 'Full Stack Developer & UI/UX Designer with 5+ years experience',
     fullContent: {
       heading: 'About Me',
-      description: `I'm a Product Designer & UI/UX Designer with a strong background in front-end engineering. I specialize in transforming complex workflows into simple, intuitive, and visually compelling experiences.
+      description: `I'm Samardhh, a Full Stack Developer and UI/UX Designer with 5+ years of experience building high-performance, user-centric digital products across enterprise, SaaS, and startup environments.
 
-My design approach combines user-centered thinking, data-backed decisions, strong understanding of engineering constraints, and rapid prototyping & usability testing.
+I uniquely blend product design, frontend engineering, and backend development—allowing me to design intuitive experiences and build them end-to-end with scalable, production-ready code.
 
-Previously, I worked as a Full Stack Developer at Verizon, where I collaborated closely with UX, product, and engineering teams to redesign enterprise tools that improved user efficiency and reduced operational friction.`,
-      highlights: ['User Research', 'Wireframing & Prototyping', 'UI Design & Design Systems', 'Usability Testing', 'Information Architecture', 'Interaction Design']
+My work focuses on delivering clean UI, smooth interactions, strong architecture, and measurable impact on business and user experience.`,
+      highlights: ['Product Thinking', 'UI/UX Design', 'Full Stack Development', 'Reusable Component Systems', 'Scalable Architecture Design', 'Real-Time Application Development', 'Strong Debugging & Problem Solving'],
+      whatIDo: {
+        design: ['User Research & Requirement Analysis', 'Wireframes, Low-Fi & High-Fi UI', 'Design Systems & Component Libraries', 'Interaction & Motion Design', 'Prototyping (Figma, FigJam)', 'Usability Testing', 'Information Architecture'],
+        development: ['React.js, Next.js, TypeScript', 'Node.js, Express, REST APIs', 'Microfrontends & Scalable Architecture', 'PostgreSQL, MongoDB', 'Performance Optimization', 'Unit Testing, CI/CD', 'Swagger, Postman, Git']
+      },
+      philosophy: [
+        'Design with purpose → every screen should reduce user effort',
+        'Code with clarity → scalable, reusable, maintainable architecture',
+        'Consistency is power → strong UI patterns make products intuitive',
+        'Performance matters → optimize for speed and smooth UX',
+        'End-to-end ownership → design it, build it, improve it'
+      ]
     }
   },
   { 
     id: 'experience', 
     title: 'Experience', 
     color: '#c1440e',  // Mars-like rust red
-    orbitRadius: 4.5,
-    orbitSpeed: 0.35,
+    orbitRadius: SHARED_ORBIT_RADIUS,
+    orbitSpeed: SHARED_ORBIT_SPEED,
     selfRotation: 0.015,
     size: 0.75,
-    startAngle: Math.PI / 4,  // 45 degrees offset
-    content: '5+ years of Product Design & Development',
+    startAngle: Math.PI / 2,  // 90 degrees
+    content: '5+ years of Full Stack Development & UI/UX Design',
     fullContent: {
       heading: 'Experience',
-      description: `With over 5 years of professional experience, I've worked across product design, UI/UX, and frontend engineering — from enterprise platforms to consumer applications.`,
+      description: `With over 5 years of professional experience, I've worked across product design, UI/UX, and full stack development — from enterprise platforms to consumer applications.`,
       experiences: [
         { 
-          role: 'Senior UI Developer / Designer', 
-          company: 'Verizon', 
+          role: 'Engineer III – Full Stack Developer + UI/UX', 
+          company: 'Verizon – Event Manager Platform', 
           period: '2023 - Present', 
-          desc: 'Redesigned Event Manager platform improving usability & task efficiency. Built UI component system, conducted usability tests, and designed prototypes for multi-service integration.' 
+          desc: 'Improved UI performance by 35%, reduced duplicate components by 40%, enhanced real-time reliability for alert monitoring.',
+          designWork: ['Designed dashboard layouts, user flows, and microfrontend navigation', 'Created reusable design components for consistent UI', 'Simplified large data-heavy screens into cleaner, digestible interactions'],
+          devWork: ['Built the React.js frontend architecture', 'Developed Node.js microservices with PostgreSQL', 'Implemented WebSockets for real-time event updates', 'Standardized API documentation using Swagger']
         },
         { 
-          role: 'UI/UX Designer & Frontend Engineer', 
-          company: 'Lemnisk', 
+          role: 'UI/UX + Frontend Developer', 
+          company: 'Lemnisk – CDP Marketing Dashboard', 
           period: '2022 - 2023', 
-          desc: 'Designed dashboards for marketing insights, converted wireframes into refined UI screens, improved data visualization for better decision-making.' 
+          desc: 'Designed analytics dashboards and visualizations. Improved workflow clarity for marketing teams.',
+          designWork: ['Designed analytics dashboards and visualizations', 'Improved workflow clarity for marketing teams', 'Established UI consistency across modules'],
+          devWork: ['Developed scalable React pages and shared components', 'Integrated APIs to deliver real-time marketing insights']
         },
         { 
-          role: 'Frontend Developer', 
-          company: 'WeDigit', 
+          role: 'Sole UI/UX Designer + Frontend Developer', 
+          company: 'WeDigit – End-to-End Product Ownership', 
           period: '2021 - 2022', 
-          desc: 'Translated UX wireframes into responsive, pixel-perfect UI. Built component-based systems and led design + development of two full web applications.' 
+          desc: 'Designed entire product flows from scratch (wireframes → final UI). Delivered pixel-perfect, responsive React UIs.',
+          designWork: ['Designed entire product flows from scratch', 'Built reusable component systems', 'Ensured strong UX across devices'],
+          devWork: ['Delivered pixel-perfect, responsive React UIs', 'Built reusable component systems']
+        },
+        { 
+          role: 'Full Stack Developer + UX Improvements', 
+          company: 'Savvas Learning – EdTech Platform', 
+          period: '2020 - 2021', 
+          desc: 'Enhanced UX for assessments and navigation. Resolved user pain points through research-driven debugging.',
+          designWork: ['Enhanced UX for assessments and navigation', 'Resolved user pain points through research-driven debugging'],
+          devWork: ['Contributed to both backend (Node.js) and frontend (React) modules']
         }
       ]
     }
@@ -83,41 +114,43 @@ Previously, I worked as a Full Stack Developer at Verizon, where I collaborated 
     id: 'skills', 
     title: 'Skills', 
     color: '#d4a574',  // Saturn-like beige/tan
-    orbitRadius: 6,
-    orbitSpeed: 0.25,
+    orbitRadius: SHARED_ORBIT_RADIUS,
+    orbitSpeed: SHARED_ORBIT_SPEED,
     selfRotation: 0.012,
     size: 0.7,
-    startAngle: Math.PI / 2,  // 90 degrees offset
-    content: 'Product Design, React, Figma, UI/UX',
+    startAngle: Math.PI,  // 180 degrees
+    content: 'Full Stack Development, UI/UX Design, React, Node.js',
     fullContent: {
-      heading: 'Skills & Technologies',
-      description: `I combine strong design skills with technical expertise, enabling me to bridge the gap between design and development seamlessly.`,
+      heading: 'Tech & Design Stack',
+      description: `I combine strong design skills with full stack technical expertise, enabling me to bridge the gap between design and development seamlessly.`,
       skillCategories: [
-        { category: 'Core Design', skills: ['Product Design', 'UX Research', 'Wireframing', 'UI Design', 'Design Systems', 'Interaction Design'] },
-        { category: 'Tools', skills: ['Figma', 'FigJam', 'Miro', 'Maze', 'Notion', 'Adobe Illustrator'] },
-        { category: 'Technical', skills: ['React.js', 'JavaScript', 'Responsive Design', 'Component Architecture', 'Three.js', 'HTML/CSS'] },
-        { category: 'Methods', skills: ['Usability Testing', 'Prototyping', 'User Research', 'Journey Mapping', 'Personas', 'A/B Testing'] }
-      ]
+        { category: 'Design Tools', skills: ['Figma', 'FigJam', 'Adobe XD', 'Miro', 'User Flows', 'Personas', 'Prototypes', 'Journey Maps'] },
+        { category: 'Frontend', skills: ['React.js', 'Next.js', 'JavaScript (ES6+)', 'TypeScript', 'Redux', 'Context API', 'React Query', 'Tailwind CSS', 'Material UI', 'Ant Design'] },
+        { category: 'Backend', skills: ['Node.js', 'Express.js', 'REST APIs', 'Swagger', 'PostgreSQL', 'MongoDB'] },
+        { category: 'Other Tools', skills: ['Docker', 'Postman', 'GitHub', 'Bitbucket', 'Jira', 'Confluence', 'CI/CD (Jenkins, GitHub Actions)'] }
+      ],
+      coreStrengths: ['Product Thinking', 'UI/UX Design', 'Full Stack Development', 'Reusable Component Systems', 'Scalable Architecture Design', 'Real-Time Application Development', 'Collaboration with PM, SRE, UX, and Backend Teams', 'Strong Debugging & Problem Solving']
     }
   },
   { 
     id: 'education', 
     title: 'Education', 
     color: '#7b68ee',  // Purple/violet - knowledge color
-    orbitRadius: 7.5,
-    orbitSpeed: 0.18,
+    orbitRadius: SHARED_ORBIT_RADIUS,
+    orbitSpeed: SHARED_ORBIT_SPEED,
     selfRotation: 0.008,
     size: 0.65,
-    startAngle: Math.PI,  // 180 degrees offset
-    content: 'BTech from GITAM University, 2019',
+    startAngle: Math.PI * 1.5,  // 270 degrees
+    content: 'B.Tech – Computer Science, GITAM University',
     fullContent: {
       heading: 'Education',
       description: `My academic foundation in technology has been instrumental in shaping my approach to design and development.`,
       education: [
         {
-          degree: 'Bachelor of Technology (BTech)',
+          degree: 'B.Tech – Computer Science',
           institution: 'GITAM University',
           year: '2015 - 2019',
+          cgpa: '8.5',
           desc: 'Graduated with a strong foundation in Computer Science and Engineering. Developed analytical thinking and problem-solving skills that I apply to design challenges today.'
         }
       ]
@@ -196,53 +229,106 @@ function loadAsteroid(callback) {
 }
 
 // ============================================
-// GALAXY LOADING (Singleton Pattern)
-// ============================================
-
-let cachedGalaxy = null
-let galaxyLoading = false
-const galaxyCallbacks = []
-
-function loadGalaxy(callback) {
-  if (cachedGalaxy) {
-    callback(cachedGalaxy.clone())
-    return
-  }
-  galaxyCallbacks.push(callback)
-  if (!galaxyLoading) {
-    galaxyLoading = true
-    const loader = new GLTFLoader()
-    loader.load(
-      '/models/galaxy.glb',
-      (gltf) => {
-        cachedGalaxy = gltf.scene
-        galaxyCallbacks.forEach(cb => cb(cachedGalaxy.clone()))
-        galaxyCallbacks.length = 0
-      },
-      undefined,
-      (err) => console.error('Error loading galaxy:', err)
-    )
-  }
-}
-
-// ============================================
 // SUN COMPONENT
 // ============================================
 
-const Sun = memo(function Sun() {
-  const ref = useRef()
+// ============================================
+// CENTER AVATAR COMPONENT (replaces Sun)
+// ============================================
+const CenterAvatar = memo(function CenterAvatar({ onAvatarClick, isMobile, isSmallMobile }) {
+  const groupRef = useRef()
+  const modelRef = useRef()
+  const [model, setModel] = useState(null)
+  const [hovered, setHovered] = useState(false)
+  const [clicked, setClicked] = useState(false)
+  
+  // Responsive avatar scale (increased)
+  const avatarScale = useMemo(() => {
+    if (isSmallMobile) return 2.0
+    if (isMobile) return 2.4
+    return 3.2
+  }, [isMobile, isSmallMobile])
 
-  useFrame(() => {
-    if (ref.current) {
-      ref.current.rotation.y += 0.005
+  useEffect(() => {
+    loadAvatar((m) => {
+      m.scale.set(avatarScale, avatarScale, avatarScale)
+      m.position.set(0, 0, 0)
+      modelRef.current = m
+      setModel(m)
+    })
+  }, [avatarScale])
+
+  useFrame((state) => {
+    if (groupRef.current) {
+      // Gentle rotation and floating (increased speed)
+      groupRef.current.rotation.y += hovered ? 0.02 : 0.008
+      const floatOffset = Math.sin(state.clock.elapsedTime * 0.5) * 0.1
+      
+      // Smooth scale transition on hover
+      const currentScale = groupRef.current.scale.x
+      const target = hovered ? 1.15 : 1.0
+      const newScale = currentScale + (target - currentScale) * 0.08
+      groupRef.current.scale.set(newScale, newScale, newScale)
+      
+      // Position avatar ABOVE the orbit plane (Y=0), centered at X=0, Z=0
+      groupRef.current.position.set(0, 0.5 + floatOffset, 0)
     }
   })
 
+  const handleClick = (e) => {
+    e.stopPropagation()
+    setClicked(true)
+    setTimeout(() => setClicked(false), 300)
+    if (onAvatarClick) onAvatarClick()
+  }
+
+  if (!model) return null
+
   return (
-    <group ref={ref}>
-      <pointLight position={[0, 0, 0]} intensity={8} color="#ff6600" distance={25} />
-      <pointLight position={[0, 0, 0]} intensity={5} color="#ffaa00" distance={15} />
-      <pointLight position={[0, 0, 0]} intensity={3} color="#ffffff" distance={8} />
+    <group 
+      ref={groupRef}
+      onClick={handleClick}
+      onPointerOver={(e) => {
+        e.stopPropagation()
+        setHovered(true)
+        document.body.style.cursor = 'pointer'
+      }}
+      onPointerOut={(e) => {
+        e.stopPropagation()
+        setHovered(false)
+        document.body.style.cursor = 'auto'
+      }}
+    >
+      <primitive object={model} />
+      {/* Lighting for avatar - intensifies on hover */}
+      <pointLight position={[0, 2, 3]} intensity={hovered ? 3.5 : 2.0} color="#ffffff" distance={12} />
+      <pointLight position={[3, 1, 0]} intensity={hovered ? 2.0 : 1.0} color="#8a2be2" distance={10} />
+      <pointLight position={[-3, 1, 0]} intensity={hovered ? 2.0 : 1.0} color="#ff6600" distance={10} />
+      <pointLight position={[0, -1, 2]} intensity={hovered ? 1.5 : 0.8} color="#4fc3f7" distance={8} />
+      {/* Glow effect on hover - larger for bigger avatar */}
+      {hovered && (
+        <>
+          <mesh>
+            <sphereGeometry args={[1.8, 32, 32]} />
+            <meshBasicMaterial color="#8a2be2" transparent opacity={0.1} />
+          </mesh>
+          <mesh>
+            <sphereGeometry args={[2.2, 32, 32]} />
+            <meshBasicMaterial color="#ff6600" transparent opacity={0.06} />
+          </mesh>
+          <mesh>
+            <sphereGeometry args={[2.6, 32, 32]} />
+            <meshBasicMaterial color="#4fc3f7" transparent opacity={0.03} />
+          </mesh>
+        </>
+      )}
+      {/* Click pulse effect - larger */}
+      {clicked && (
+        <mesh>
+          <sphereGeometry args={[2.5, 32, 32]} />
+          <meshBasicMaterial color="#ffffff" transparent opacity={0.2} />
+        </mesh>
+      )}
     </group>
   )
 })
@@ -508,20 +594,82 @@ const SpaceModal = memo(function SpaceModal({ planet, onClose, isMobile }) {
           }}>
             {fullContent.description}
           </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
-            {fullContent.highlights.map((highlight, i) => (
-              <span key={i} style={{
-                padding: '8px 16px',
-                background: `${planet.color}33`,
-                border: `1px solid ${planet.color}66`,
-                borderRadius: '20px',
-                fontSize: isMobile ? '12px' : '14px',
-                color: planet.color,
-              }}>
-                {highlight}
-              </span>
-            ))}
+          
+          {/* Core Strengths */}
+          <div style={{ marginBottom: '28px' }}>
+            <h4 style={{ color: planet.color, marginBottom: '12px', fontSize: isMobile ? '15px' : '17px' }}>🧩 Core Strengths</h4>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
+              {fullContent.highlights.map((highlight, i) => (
+                <span key={i} style={{
+                  padding: '8px 16px',
+                  background: `${planet.color}33`,
+                  border: `1px solid ${planet.color}66`,
+                  borderRadius: '20px',
+                  fontSize: isMobile ? '12px' : '14px',
+                  color: planet.color,
+                }}>
+                  {highlight}
+                </span>
+              ))}
+            </div>
           </div>
+          
+          {/* What I Do */}
+          {fullContent.whatIDo && (
+            <div style={{ marginBottom: '28px' }}>
+              <h4 style={{ color: planet.color, marginBottom: '16px', fontSize: isMobile ? '15px' : '17px' }}>💼 What I Do</h4>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
+                <div style={{
+                  padding: '16px',
+                  background: `${planet.color}22`,
+                  border: `1px solid ${planet.color}44`,
+                  borderRadius: '12px',
+                  textAlign: 'left',
+                }}>
+                  <h5 style={{ margin: '0 0 12px 0', color: planet.color, fontSize: isMobile ? '13px' : '15px' }}>🎨 UI/UX Design</h5>
+                  <ul style={{ margin: 0, paddingLeft: '18px', fontSize: isMobile ? '11px' : '13px', opacity: 0.85, lineHeight: 1.8 }}>
+                    {fullContent.whatIDo.design.map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div style={{
+                  padding: '16px',
+                  background: `${planet.color}22`,
+                  border: `1px solid ${planet.color}44`,
+                  borderRadius: '12px',
+                  textAlign: 'left',
+                }}>
+                  <h5 style={{ margin: '0 0 12px 0', color: planet.color, fontSize: isMobile ? '13px' : '15px' }}>💻 Full Stack Development</h5>
+                  <ul style={{ margin: 0, paddingLeft: '18px', fontSize: isMobile ? '11px' : '13px', opacity: 0.85, lineHeight: 1.8 }}>
+                    {fullContent.whatIDo.development.map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Philosophy */}
+          {fullContent.philosophy && (
+            <div>
+              <h4 style={{ color: planet.color, marginBottom: '12px', fontSize: isMobile ? '15px' : '17px' }}>🧠 Philosophy – Design × Code</h4>
+              <div style={{
+                padding: '16px',
+                background: `${planet.color}15`,
+                border: `1px solid ${planet.color}33`,
+                borderRadius: '12px',
+                textAlign: 'left',
+              }}>
+                <ul style={{ margin: 0, paddingLeft: '18px', fontSize: isMobile ? '12px' : '14px', opacity: 0.85, lineHeight: 2 }}>
+                  {fullContent.philosophy.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
         </>
       )
     }
@@ -532,10 +680,10 @@ const SpaceModal = memo(function SpaceModal({ planet, onClose, isMobile }) {
           <p style={{ fontSize: isMobile ? '14px' : '16px', lineHeight: 1.6, opacity: 0.9, marginBottom: '24px' }}>
             {fullContent.description}
           </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {fullContent.experiences.map((exp, i) => (
               <div key={i} style={{
-                padding: '16px 20px',
+                padding: '20px',
                 background: `${planet.color}22`,
                 border: `1px solid ${planet.color}44`,
                 borderRadius: '12px',
@@ -543,10 +691,34 @@ const SpaceModal = memo(function SpaceModal({ planet, onClose, isMobile }) {
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
                   <h4 style={{ margin: 0, color: planet.color, fontSize: isMobile ? '14px' : '16px' }}>{exp.role}</h4>
-                  <span style={{ fontSize: isMobile ? '11px' : '12px', opacity: 0.6 }}>{exp.period}</span>
+                  <span style={{ fontSize: isMobile ? '11px' : '12px', opacity: 0.6, background: `${planet.color}33`, padding: '4px 10px', borderRadius: '12px' }}>{exp.period}</span>
                 </div>
-                <div style={{ fontSize: isMobile ? '12px' : '14px', opacity: 0.8, marginBottom: '6px' }}>{exp.company}</div>
-                <div style={{ fontSize: isMobile ? '12px' : '13px', opacity: 0.7 }}>{exp.desc}</div>
+                <div style={{ fontSize: isMobile ? '13px' : '15px', opacity: 0.9, marginBottom: '10px', fontWeight: 500 }}>{exp.company}</div>
+                <div style={{ fontSize: isMobile ? '12px' : '13px', opacity: 0.75, marginBottom: '12px' }}>{exp.desc}</div>
+                
+                {/* Design Work */}
+                {exp.designWork && (
+                  <div style={{ marginBottom: '10px' }}>
+                    <h5 style={{ margin: '0 0 6px 0', color: planet.color, fontSize: isMobile ? '11px' : '12px', opacity: 0.9 }}>🎨 Design Contributions:</h5>
+                    <ul style={{ margin: 0, paddingLeft: '16px', fontSize: isMobile ? '10px' : '11px', opacity: 0.7, lineHeight: 1.7 }}>
+                      {exp.designWork.map((item, j) => (
+                        <li key={j}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
+                {/* Dev Work */}
+                {exp.devWork && (
+                  <div>
+                    <h5 style={{ margin: '0 0 6px 0', color: planet.color, fontSize: isMobile ? '11px' : '12px', opacity: 0.9 }}>💻 Development Work:</h5>
+                    <ul style={{ margin: 0, paddingLeft: '16px', fontSize: isMobile ? '10px' : '11px', opacity: 0.7, lineHeight: 1.7 }}>
+                      {exp.devWork.map((item, j) => (
+                        <li key={j}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -560,7 +732,7 @@ const SpaceModal = memo(function SpaceModal({ planet, onClose, isMobile }) {
           <p style={{ fontSize: isMobile ? '14px' : '16px', lineHeight: 1.6, opacity: 0.9, marginBottom: '24px' }}>
             {fullContent.description}
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
             {fullContent.skillCategories.map((cat, i) => (
               <div key={i} style={{
                 padding: '16px',
@@ -584,6 +756,27 @@ const SpaceModal = memo(function SpaceModal({ planet, onClose, isMobile }) {
               </div>
             ))}
           </div>
+          
+          {/* Core Strengths */}
+          {fullContent.coreStrengths && (
+            <div>
+              <h4 style={{ color: planet.color, marginBottom: '12px', fontSize: isMobile ? '15px' : '17px' }}>🧩 Core Strengths</h4>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
+                {fullContent.coreStrengths.map((strength, i) => (
+                  <span key={i} style={{
+                    padding: '8px 14px',
+                    background: `${planet.color}33`,
+                    border: `1px solid ${planet.color}66`,
+                    borderRadius: '20px',
+                    fontSize: isMobile ? '11px' : '13px',
+                    color: planet.color,
+                  }}>
+                    {strength}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </>
       )
     }
@@ -597,18 +790,34 @@ const SpaceModal = memo(function SpaceModal({ planet, onClose, isMobile }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {fullContent.education.map((edu, i) => (
               <div key={i} style={{
-                padding: '20px 24px',
+                padding: '24px',
                 background: `${planet.color}22`,
                 border: `1px solid ${planet.color}44`,
                 borderRadius: '12px',
                 textAlign: 'left',
               }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
-                  <h4 style={{ margin: 0, color: planet.color, fontSize: isMobile ? '15px' : '18px' }}>🎓 {edu.degree}</h4>
-                  <span style={{ fontSize: isMobile ? '11px' : '12px', opacity: 0.6, background: `${planet.color}33`, padding: '4px 10px', borderRadius: '12px' }}>{edu.year}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
+                  <h4 style={{ margin: 0, color: planet.color, fontSize: isMobile ? '16px' : '20px' }}>🎓 {edu.degree}</h4>
+                  <span style={{ fontSize: isMobile ? '11px' : '12px', opacity: 0.6, background: `${planet.color}33`, padding: '4px 12px', borderRadius: '12px' }}>{edu.year}</span>
                 </div>
-                <div style={{ fontSize: isMobile ? '14px' : '16px', opacity: 0.9, marginBottom: '10px', color: planet.color }}>{edu.institution}</div>
-                <div style={{ fontSize: isMobile ? '12px' : '14px', opacity: 0.75, lineHeight: 1.6 }}>{edu.desc}</div>
+                <div style={{ fontSize: isMobile ? '15px' : '18px', opacity: 0.95, marginBottom: '12px', color: planet.color, fontWeight: 500 }}>{edu.institution}</div>
+                
+                {/* CGPA */}
+                {edu.cgpa && (
+                  <div style={{ 
+                    display: 'inline-block',
+                    marginBottom: '16px',
+                    padding: '10px 20px',
+                    background: `linear-gradient(135deg, ${planet.color}44, ${planet.color}22)`,
+                    border: `2px solid ${planet.color}`,
+                    borderRadius: '12px',
+                  }}>
+                    <span style={{ fontSize: isMobile ? '12px' : '14px', opacity: 0.8 }}>CGPA: </span>
+                    <span style={{ fontSize: isMobile ? '20px' : '24px', fontWeight: 'bold', color: planet.color }}>{edu.cgpa}</span>
+                  </div>
+                )}
+                
+                <div style={{ fontSize: isMobile ? '13px' : '15px', opacity: 0.75, lineHeight: 1.7 }}>{edu.desc}</div>
               </div>
             ))}
           </div>
@@ -760,16 +969,28 @@ const SpaceModal = memo(function SpaceModal({ planet, onClose, isMobile }) {
 // PLANET COMPONENT
 // ============================================
 
-const Planet = memo(function Planet({ planet, isMobile, onClick }) {
+// Shared time reference for synchronized orbit
+const sharedOrbitTime = { current: 0 }
+
+const Planet = memo(function Planet({ planet, isMobile, onClick, planetIndex }) {
   const meshRef = useRef()
   const groupRef = useRef()
-  const textGroupRef = useRef()
-  const time = useRef(planet.startAngle || 0)
-  const textRotation = useRef(0)
+  
+  // Calculate angle based on planet index (4 planets = 90 degrees apart each)
+  const angleOffset = (planetIndex * Math.PI * 2) / 4  // Equal spacing: 0, π/2, π, 3π/2
   
   const adjustedOrbit = isMobile ? planet.orbitRadius * 0.55 : planet.orbitRadius
-  const adjustedSize = isMobile ? planet.size * 0.85 : planet.size
-  const textRadius = adjustedSize + (isMobile ? 0.5 : 0.6)
+  const adjustedSize = isMobile ? SHARED_PLANET_SIZE * 0.85 : SHARED_PLANET_SIZE
+  
+  // Fixed height for all planets
+  const fixedY = 0.5
+  
+  // Height for icon above planet
+  const iconHeight = adjustedSize + (isMobile ? 0.25 : 0.35)
+  // Icon size
+  const iconSize = isMobile ? 0.35 : 0.5
+  // Text position above icon
+  const textHeight = iconHeight + iconSize + (isMobile ? 0.3 : 0.4)
 
   const material = useMemo(() => {
     return new THREE.MeshStandardMaterial({
@@ -779,78 +1000,70 @@ const Planet = memo(function Planet({ planet, isMobile, onClick }) {
     })
   }, [planet.color])
 
-  // Create curved text - letters positioned along a semi-circle arc
-  const curvedLetters = useMemo(() => {
+  // Create single word texture that orbits around the planet
+  const wordTexture = useMemo(() => {
     const text = planet.title.toUpperCase()
-    const letters = []
-    const letterCount = text.length
-    const arcAngle = Math.PI * 0.4 // Tighter arc (about 72 degrees) for less gap
-    const startAngle = -arcAngle / 2
+    const canvas = document.createElement('canvas')
+    const fontSize = isMobile ? 28 : 32
     
-    for (let i = 0; i < letterCount; i++) {
-      const canvas = document.createElement('canvas')
-      canvas.width = 64
-      canvas.height = 64
-      const ctx = canvas.getContext('2d')
-      
-      // Clear
-      ctx.clearRect(0, 0, 64, 64)
-      
-      // Glow effect
-      ctx.font = `bold ${isMobile ? 32 : 36}px Orbitron, sans-serif`
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      
-      // Outer glow
-      ctx.shadowColor = planet.color
-      ctx.shadowBlur = 15
-      ctx.fillStyle = planet.color
-      ctx.fillText(text[i], 32, 32)
-      
-      // Inner glow
-      ctx.shadowBlur = 8
-      ctx.fillStyle = '#ffffff'
-      ctx.fillText(text[i], 32, 32)
-      
-      // Crisp text
-      ctx.shadowBlur = 0
-      ctx.fillText(text[i], 32, 32)
-      
-      const texture = new THREE.CanvasTexture(canvas)
-      texture.needsUpdate = true
-      
-      // Calculate position along the arc
-      const angle = startAngle + (i / (letterCount - 1 || 1)) * arcAngle
-      
-      letters.push({
-        char: text[i],
-        texture,
-        angle
-      })
-    }
+    // Measure text width
+    const ctx = canvas.getContext('2d')
+    ctx.font = `bold ${fontSize}px Orbitron, sans-serif`
+    const textWidth = ctx.measureText(text).width
     
-    return letters
+    // Set canvas size based on text
+    canvas.width = Math.ceil(textWidth) + 40
+    canvas.height = fontSize + 20
+    
+    // Re-get context after resize
+    const context = canvas.getContext('2d')
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    
+    // Setup text style
+    context.font = `bold ${fontSize}px Orbitron, sans-serif`
+    context.textAlign = 'center'
+    context.textBaseline = 'middle'
+    
+    // Outer glow
+    context.shadowColor = planet.color
+    context.shadowBlur = 12
+    context.fillStyle = planet.color
+    context.fillText(text, canvas.width / 2, canvas.height / 2)
+    
+    // Inner glow
+    context.shadowBlur = 6
+    context.fillStyle = '#ffffff'
+    context.fillText(text, canvas.width / 2, canvas.height / 2)
+    
+    // Crisp text
+    context.shadowBlur = 0
+    context.fillText(text, canvas.width / 2, canvas.height / 2)
+    
+    const texture = new THREE.CanvasTexture(canvas)
+    texture.needsUpdate = true
+    
+    return { texture, aspectRatio: canvas.width / canvas.height }
   }, [planet.title, planet.color, isMobile])
 
   useFrame(() => {
     if (groupRef.current && meshRef.current) {
-      time.current += 0.01 * planet.orbitSpeed
+      // Update shared time (only first planet updates it, others just read)
+      if (planetIndex === 0) {
+        sharedOrbitTime.current += 0.01 * planet.orbitSpeed
+      }
+      
+      // Calculate position using shared time + this planet's angle offset
+      const currentAngle = sharedOrbitTime.current + angleOffset
       
       // Orbit around center
-      groupRef.current.position.x = Math.cos(time.current) * adjustedOrbit
-      groupRef.current.position.z = Math.sin(time.current) * adjustedOrbit
-      // Keep planet above orbit line (base Y = 0.5, oscillates between 0.2 and 0.8)
-      groupRef.current.position.y = 0.5 + Math.sin(time.current * 2) * 0.3
+      groupRef.current.position.x = Math.cos(currentAngle) * adjustedOrbit
+      groupRef.current.position.z = Math.sin(currentAngle) * adjustedOrbit
+      // Keep all planets at same fixed height
+      groupRef.current.position.y = fixedY
       
       // Self rotation
       meshRef.current.rotation.y += planet.selfRotation
       meshRef.current.rotation.x += planet.selfRotation * 0.3
-      
-      // Rotate text group horizontally around planet
-      if (textGroupRef.current) {
-        textRotation.current += 0.012
-        textGroupRef.current.rotation.y = textRotation.current
-      }
     }
   })
 
@@ -867,6 +1080,10 @@ const Planet = memo(function Planet({ planet, isMobile, onClick }) {
     document.body.style.cursor = 'default'
   }, [])
 
+  // Calculate word sprite size
+  const wordHeight = isMobile ? 0.35 : 0.4
+  const wordWidth = wordHeight * wordTexture.aspectRatio
+
   return (
     <group ref={groupRef}>
       {/* Main planet - clickable */}
@@ -881,11 +1098,11 @@ const Planet = memo(function Planet({ planet, isMobile, onClick }) {
       </mesh>
       
       {/* 3D Icon on top of planet */}
-      <group position={[0, adjustedSize + (isMobile ? 0.25 : 0.35), 0]}>
-        {planet.id === 'about' && <PersonIcon color={planet.color} size={isMobile ? 0.35 : 0.5} />}
-        {planet.id === 'experience' && <BriefcaseIcon color={planet.color} size={isMobile ? 0.35 : 0.5} />}
-        {planet.id === 'skills' && <GearIcon color={planet.color} size={isMobile ? 0.35 : 0.5} />}
-        {planet.id === 'education' && <GraduationCapIcon color={planet.color} size={isMobile ? 0.35 : 0.5} />}
+      <group position={[0, iconHeight, 0]}>
+        {planet.id === 'about' && <PersonIcon color={planet.color} size={iconSize} />}
+        {planet.id === 'experience' && <BriefcaseIcon color={planet.color} size={iconSize} />}
+        {planet.id === 'skills' && <GearIcon color={planet.color} size={iconSize} />}
+        {planet.id === 'education' && <GraduationCapIcon color={planet.color} size={iconSize} />}
       </group>
       
       {/* Invisible larger hit area for easier clicking */}
@@ -898,26 +1115,16 @@ const Planet = memo(function Planet({ planet, isMobile, onClick }) {
         <meshBasicMaterial transparent opacity={0} />
       </mesh>
       
-      {/* Rotating curved text around planet horizontally */}
-      <group ref={textGroupRef}>
-        {curvedLetters.map((letter, index) => {
-          // Position letters along a semi-circle arc
-          const x = Math.sin(letter.angle) * textRadius
-          const z = Math.cos(letter.angle) * textRadius
-          return (
-            <sprite
-              key={index}
-              position={[x, 0, z]}
-              scale={[isMobile ? 0.36 : 0.42, isMobile ? 0.36 : 0.42, 1]}
-              onClick={handleClick}
-              onPointerOver={handlePointerOver}
-              onPointerOut={handlePointerOut}
-            >
-              <spriteMaterial map={letter.texture} transparent />
-            </sprite>
-          )
-        })}
-      </group>
+      {/* Text label above icon */}
+      <sprite
+        position={[0, textHeight, 0]}
+        scale={[wordWidth, wordHeight, 1]}
+        onClick={handleClick}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+      >
+        <spriteMaterial map={wordTexture.texture} transparent />
+      </sprite>
     </group>
   )
 })
@@ -938,18 +1145,32 @@ const PersonIcon = memo(function PersonIcon({ color, size }) {
   
   return (
     <group ref={groupRef} scale={[size, size, size]}>
-      {/* Head */}
-      <mesh position={[0, 0.5, 0]}>
-        <sphereGeometry args={[0.35, 16, 16]} />
-        <meshStandardMaterial color="#ffffff" emissive={color} emissiveIntensity={0.3} metalness={0.5} roughness={0.3} />
+      {/* Astronaut Helmet - outer shell */}
+      <mesh position={[0, 0.1, 0]}>
+        <sphereGeometry args={[0.5, 24, 24]} />
+        <meshStandardMaterial color="#ffffff" emissive={color} emissiveIntensity={0.2} metalness={0.8} roughness={0.2} />
       </mesh>
-      {/* Body */}
-      <mesh position={[0, -0.2, 0]}>
-        <capsuleGeometry args={[0.3, 0.5, 8, 16]} />
-        <meshStandardMaterial color="#ffffff" emissive={color} emissiveIntensity={0.3} metalness={0.5} roughness={0.3} />
+      {/* Helmet visor - dark reflective */}
+      <mesh position={[0, 0.1, 0.25]}>
+        <sphereGeometry args={[0.38, 24, 24, 0, Math.PI * 2, 0, Math.PI / 2]} />
+        <meshStandardMaterial color="#1a1a2e" emissive={color} emissiveIntensity={0.4} metalness={0.9} roughness={0.1} transparent opacity={0.9} />
+      </mesh>
+      {/* Helmet ring/collar */}
+      <mesh position={[0, -0.3, 0]}>
+        <torusGeometry args={[0.35, 0.08, 8, 24]} />
+        <meshStandardMaterial color="#cccccc" emissive={color} emissiveIntensity={0.2} metalness={0.7} roughness={0.3} />
+      </mesh>
+      {/* Small antenna on helmet */}
+      <mesh position={[0.3, 0.45, 0]}>
+        <cylinderGeometry args={[0.02, 0.02, 0.2, 8]} />
+        <meshStandardMaterial color="#ff6600" emissive="#ff6600" emissiveIntensity={0.5} />
+      </mesh>
+      <mesh position={[0.3, 0.58, 0]}>
+        <sphereGeometry args={[0.05, 8, 8]} />
+        <meshStandardMaterial color="#ff3300" emissive="#ff3300" emissiveIntensity={0.8} />
       </mesh>
       {/* Glow */}
-      <pointLight position={[0, 0, 0.5]} intensity={1} color={color} distance={2} />
+      <pointLight position={[0, 0, 0.5]} intensity={1.5} color={color} distance={2} />
     </group>
   )
 })
@@ -1237,45 +1458,6 @@ const AlienSpaceship = memo(function AlienSpaceship({ isMobile, side = 'right' }
 })
 
 // ============================================
-// CORNER GALAXY COMPONENT
-// ============================================
-
-const CornerGalaxy = memo(function CornerGalaxy({ position, isMobile, isSmallMobile }) {
-  const groupRef = useRef()
-  const [model, setModel] = useState(null)
-  
-  useEffect(() => {
-    loadGalaxy(setModel)
-  }, [])
-  
-  useFrame((state) => {
-    if (groupRef.current && model) {
-      // Slow rotation
-      groupRef.current.rotation.y += 0.003
-      groupRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.3) * 0.1
-    }
-  })
-  
-  // Responsive scale - single large galaxy
-  const scale = useMemo(() => {
-    if (isSmallMobile) return 2.5
-    if (isMobile) return 3.0
-    return 5.0
-  }, [isMobile, isSmallMobile])
-  
-  if (!model) return null
-  
-  return (
-    <primitive
-      ref={groupRef}
-      object={model}
-      position={position}
-      scale={scale}
-    />
-  )
-})
-
-// ============================================
 // GLOWING 3D STAR COMPONENT
 // ============================================
 
@@ -1374,7 +1556,7 @@ const TITLE_STARS_MOBILE = [
 // TITLE 3D COMPONENT
 // ============================================
 
-const TITLE_TAGS = ['Frontend Developer', 'UX Designer', 'Product Designer']
+const TITLE_TAGS = ['Frontend Developer', 'Full Stack Developer', 'UX Designer', 'Product Designer']
 
 const Title3D = memo(function Title3D({ isMobile }) {
   const groupRef = useRef()
@@ -1431,27 +1613,35 @@ const Title3D = memo(function Title3D({ isMobile }) {
       
       ctx.clearRect(0, 0, 512, 80)
       
-      // Background pill
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)'
-      ctx.beginPath()
-      ctx.roundRect(10, 10, 492, 60, 30)
-      ctx.fill()
-      
-      // Border
-      ctx.strokeStyle = 'rgba(255, 170, 0, 0.8)'
-      ctx.lineWidth = 3
-      ctx.beginPath()
-      ctx.roundRect(10, 10, 492, 60, 30)
-      ctx.stroke()
-      
-      // Text with glow
+      // Glassmorphism text effect
       ctx.font = `bold ${isMobile ? 34 : 34}px Orbitron, sans-serif`
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
-      ctx.shadowColor = '#ffaa00'
-      ctx.shadowBlur = 15
-      ctx.fillStyle = '#ffcc00'
+      
+      // Outer glow layer - brighter
+      ctx.shadowColor = 'rgba(255, 255, 255, 1)'
+      ctx.shadowBlur = 30
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'
       ctx.fillText(tag.toUpperCase(), 256, 42)
+      
+      // Glass reflection gradient on text - brighter
+      const textGradient = ctx.createLinearGradient(50, 15, 50, 65)
+      textGradient.addColorStop(0, 'rgba(255, 255, 255, 1)')
+      textGradient.addColorStop(0.3, 'rgba(255, 255, 255, 0.9)')
+      textGradient.addColorStop(0.5, 'rgba(220, 240, 255, 0.75)')
+      textGradient.addColorStop(0.7, 'rgba(255, 255, 255, 0.85)')
+      textGradient.addColorStop(1, 'rgba(255, 255, 255, 1)')
+      
+      // Main text with glass gradient
+      ctx.shadowColor = 'rgba(255, 255, 255, 0.9)'
+      ctx.shadowBlur = 20
+      ctx.fillStyle = textGradient
+      ctx.fillText(tag.toUpperCase(), 256, 42)
+      
+      // Bright inner highlight
+      ctx.shadowBlur = 0
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'
+      ctx.fillText(tag.toUpperCase(), 256, 41)
       
       const texture = new THREE.CanvasTexture(canvas)
       texture.needsUpdate = true
@@ -1529,15 +1719,15 @@ const Title3D = memo(function Title3D({ isMobile }) {
       <group position={[0, isMobile ? -0.18 : -0.15, 0]}>
         {tagTextures.map((item, i) => {
           const isHovered = hoveredTag === i
-          const tagSpacing = isMobile ? 0.75 : 1.1
-          const xPos = (i - 1) * tagSpacing
+          const tagSpacing = isMobile ? 0.72 : 1.05
+          const xPos = (i - 1.5) * tagSpacing
           return (
             <sprite
               key={item.tag}
               position={[xPos, isHovered ? 0.04 : 0, isHovered ? 0.15 : 0]}
               scale={[
-                (isMobile ? 0.72 : 1.0) * (isHovered ? 1.1 : 1), 
-                (isMobile ? 0.13 : 0.18) * (isHovered ? 1.1 : 1), 
+                (isMobile ? 0.58 : 0.82) * (isHovered ? 1.1 : 1), 
+                (isMobile ? 0.11 : 0.15) * (isHovered ? 1.1 : 1), 
                 1
               ]}
               onPointerOver={() => {
@@ -1593,11 +1783,13 @@ const FloatingAsteroid = memo(function FloatingAsteroid({ index, isMobile }) {
   const [model, setModel] = useState(null)
   
   // Generate consistent random values based on index
-  const orbitRadius = useMemo(() => 7.5 + seededRandom(index * 17) * 2, [index])
+  // Smaller orbit radius for mobile to keep asteroids visible
+  const baseOrbitRadius = useMemo(() => isMobile ? 4.5 : 7.5, [isMobile])
+  const orbitRadius = useMemo(() => baseOrbitRadius + seededRandom(index * 17) * (isMobile ? 1 : 2), [index, baseOrbitRadius, isMobile])
   const orbitSpeed = useMemo(() => 0.1 + seededRandom(index * 23) * 0.15, [index])
   const initialAngle = useMemo(() => seededRandom(index * 31) * Math.PI * 2, [index])
-  const yOffset = useMemo(() => (seededRandom(index * 41) - 0.5) * 1.5, [index])
-  const scale = useMemo(() => (isMobile ? 0.03 : 0.05) + seededRandom(index * 53) * 0.03, [index, isMobile])
+  const yOffset = useMemo(() => (seededRandom(index * 41) - 0.5) * (isMobile ? 0.8 : 1.5), [index, isMobile])
+  const scale = useMemo(() => (isMobile ? 0.025 : 0.05) + seededRandom(index * 53) * (isMobile ? 0.02 : 0.03), [index, isMobile])
   const rotSpeed = useMemo(() => (seededRandom(index * 61) - 0.5) * 0.1, [index])
   
   const angleRef = useRef(initialAngle)
@@ -1611,9 +1803,9 @@ const FloatingAsteroid = memo(function FloatingAsteroid({ index, isMobile }) {
     if (groupRef.current && model) {
       // Orbit around the solar system
       angleRef.current += delta * orbitSpeed
-      const adjustedRadius = isMobile ? orbitRadius * 0.55 : orbitRadius
-      groupRef.current.position.x = Math.cos(angleRef.current) * adjustedRadius
-      groupRef.current.position.z = Math.sin(angleRef.current) * adjustedRadius
+      // No additional adjustment needed - orbitRadius already handles mobile
+      groupRef.current.position.x = Math.cos(angleRef.current) * orbitRadius
+      groupRef.current.position.z = Math.sin(angleRef.current) * orbitRadius
       groupRef.current.position.y = yOffset + Math.sin(angleRef.current * 2) * 0.3
       
       // Tumbling rotation
@@ -1700,37 +1892,23 @@ const OrbitRing = memo(function OrbitRing({ radius, isMobile }) {
 // Asteroid belt configuration
 const ASTEROID_COUNT = 3
 
-const Scene = memo(function Scene({ isMobile, isSmallMobile, onPlanetClick }) {
+const Scene = memo(function Scene({ isMobile, isSmallMobile, onPlanetClick, onAvatarClick }) {
   // Generate stable asteroid indices
   const asteroidIndices = useMemo(() => 
     Array.from({ length: ASTEROID_COUNT }, (_, i) => i), 
   [])
   
-  // Galaxy position - single galaxy on the right side, zoomed in
-  const galaxyPosition = useMemo(() => {
-    const xOffset = isSmallMobile ? 4 : (isMobile ? 5 : 8)
-    return [xOffset, -2, -1]
-  }, [isMobile, isSmallMobile])
-  
   return (
     <>
       <ambientLight intensity={0.4} />
       <directionalLight position={[10, 10, 5]} intensity={1} />
-      <Sun />
+      <CenterAvatar onAvatarClick={onAvatarClick} isMobile={isMobile} isSmallMobile={isSmallMobile} />
       
-      {/* Starry Orbit Rings */}
-      {PLANETS.map(planet => (
-        <OrbitRing 
-          key={`orbit-${planet.id}`} 
-          radius={planet.orbitRadius} 
-          isMobile={isMobile} 
-        />
-      ))}
-      
-      {PLANETS.map(planet => (
+      {PLANETS.map((planet, index) => (
         <Planet 
           key={planet.id} 
           planet={planet} 
+          planetIndex={index}
           isMobile={isMobile}
           onClick={() => onPlanetClick(planet)}
         />
@@ -1744,9 +1922,6 @@ const Scene = memo(function Scene({ isMobile, isSmallMobile, onPlanetClick }) {
           isMobile={isMobile} 
         />
       ))}
-      
-      {/* Single Galaxy - Middle Right, extra large */}
-      <CornerGalaxy position={galaxyPosition} isMobile={isMobile} isSmallMobile={isSmallMobile} />
     </>
   )
 })
@@ -1874,7 +2049,6 @@ const SolarSystem = memo(function SolarSystem({ onStartGame }) {
   const [isSmallMobile, setIsSmallMobile] = useState(false)
   const [activePlanet, setActivePlanet] = useState(null)
   const [showContact, setShowContact] = useState(false)
-  const [avatarDirection, setAvatarDirection] = useState('center')
   const [bubbles, setBubbles] = useState([])
   
   useEffect(() => {
@@ -1896,7 +2070,11 @@ const SolarSystem = memo(function SolarSystem({ onStartGame }) {
     setActivePlanet(null)
   }, [])
 
-  const handleSunClick = useCallback(() => {
+  const handleBubblePop = useCallback((id) => {
+    setBubbles(prev => prev.filter(b => b.id !== id))
+  }, [])
+
+  const handleAvatarClick = useCallback(() => {
     const newBubbles = []
     const bubbleCount = isMobile ? 8 : 15
     for (let i = 0; i < bubbleCount; i++) {
@@ -1904,15 +2082,11 @@ const SolarSystem = memo(function SolarSystem({ onStartGame }) {
         id: Date.now() + i,
         x: Math.random() * (window.innerWidth - 80) + 40,
         size: isMobile ? 40 + Math.random() * 40 : 60 + Math.random() * 60,
-        delay: i * 250, // Slower spawn: 250ms between each bubble
+        delay: i * 250,
       })
     }
     setBubbles(prev => [...prev, ...newBubbles])
   }, [isMobile])
-
-  const handleBubblePop = useCallback((id) => {
-    setBubbles(prev => prev.filter(b => b.id !== id))
-  }, [])
 
   const containerStyle = useMemo(() => ({
     position: 'fixed',
@@ -1931,6 +2105,216 @@ const SolarSystem = memo(function SolarSystem({ onStartGame }) {
 
   return (
     <div style={containerStyle}>
+      {/* ============================================ */}
+      {/* ENHANCED COSMIC BACKGROUND */}
+      {/* ============================================ */}
+      
+      {/* Nebula Clouds Layer */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+        zIndex: 1,
+        pointerEvents: 'none',
+      }}>
+        {/* Purple Nebula - Top Left */}
+        <div style={{
+          position: 'absolute',
+          top: '-20%',
+          left: '-10%',
+          width: '60%',
+          height: '50%',
+          background: 'radial-gradient(ellipse at center, rgba(138, 43, 226, 0.15) 0%, rgba(75, 0, 130, 0.08) 40%, transparent 70%)',
+          filter: 'blur(60px)',
+          animation: 'nebulaFloat1 25s ease-in-out infinite',
+        }} />
+        {/* Blue Nebula - Bottom Right */}
+        <div style={{
+          position: 'absolute',
+          bottom: '-15%',
+          right: '-15%',
+          width: '55%',
+          height: '45%',
+          background: 'radial-gradient(ellipse at center, rgba(30, 144, 255, 0.12) 0%, rgba(0, 100, 200, 0.06) 50%, transparent 70%)',
+          filter: 'blur(50px)',
+          animation: 'nebulaFloat2 30s ease-in-out infinite',
+        }} />
+        {/* Pink Nebula - Center Right */}
+        <div style={{
+          position: 'absolute',
+          top: '30%',
+          right: '5%',
+          width: '40%',
+          height: '35%',
+          background: 'radial-gradient(ellipse at center, rgba(255, 105, 180, 0.1) 0%, rgba(219, 112, 147, 0.05) 50%, transparent 70%)',
+          filter: 'blur(45px)',
+          animation: 'nebulaFloat3 20s ease-in-out infinite',
+        }} />
+        {/* Teal Nebula - Bottom Left */}
+        <div style={{
+          position: 'absolute',
+          bottom: '10%',
+          left: '5%',
+          width: '35%',
+          height: '30%',
+          background: 'radial-gradient(ellipse at center, rgba(0, 206, 209, 0.1) 0%, rgba(32, 178, 170, 0.05) 50%, transparent 70%)',
+          filter: 'blur(40px)',
+          animation: 'nebulaFloat1 22s ease-in-out infinite reverse',
+        }} />
+      </div>
+      
+      {/* Enhanced Star Field - Multiple Layers */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 2,
+        pointerEvents: 'none',
+      }}>
+        {/* Distant small stars */}
+        {[...Array(isMobile ? 80 : 150)].map((_, i) => (
+          <div
+            key={`star-small-${i}`}
+            style={{
+              position: 'absolute',
+              left: `${seededRandom(i * 7) * 100}%`,
+              top: `${seededRandom(i * 11) * 100}%`,
+              width: `${1 + seededRandom(i * 3) * 1.5}px`,
+              height: `${1 + seededRandom(i * 3) * 1.5}px`,
+              background: ['#ffffff', '#e8e8ff', '#ffe8e8', '#fff8e0'][Math.floor(seededRandom(i * 5) * 4)],
+              borderRadius: '50%',
+              opacity: 0.3 + seededRandom(i * 13) * 0.5,
+              animation: `twinkle ${2 + seededRandom(i * 17) * 4}s ease-in-out infinite`,
+              animationDelay: `${seededRandom(i * 19) * 5}s`,
+            }}
+          />
+        ))}
+        {/* Medium bright stars */}
+        {[...Array(isMobile ? 30 : 60)].map((_, i) => (
+          <div
+            key={`star-med-${i}`}
+            style={{
+              position: 'absolute',
+              left: `${seededRandom(i * 23) * 100}%`,
+              top: `${seededRandom(i * 29) * 100}%`,
+              width: `${2 + seededRandom(i * 31) * 2}px`,
+              height: `${2 + seededRandom(i * 31) * 2}px`,
+              background: ['#ffffff', '#b8d4ff', '#ffd4ff', '#ffffd4', '#d4ffff'][Math.floor(seededRandom(i * 37) * 5)],
+              borderRadius: '50%',
+              boxShadow: `0 0 ${3 + seededRandom(i * 41) * 5}px currentColor`,
+              opacity: 0.5 + seededRandom(i * 43) * 0.4,
+              animation: `twinkle ${3 + seededRandom(i * 47) * 3}s ease-in-out infinite`,
+              animationDelay: `${seededRandom(i * 53) * 4}s`,
+            }}
+          />
+        ))}
+        {/* Large bright stars with glow */}
+        {[...Array(isMobile ? 8 : 15)].map((_, i) => (
+          <div
+            key={`star-large-${i}`}
+            style={{
+              position: 'absolute',
+              left: `${seededRandom(i * 59) * 100}%`,
+              top: `${seededRandom(i * 61) * 100}%`,
+              width: `${3 + seededRandom(i * 67) * 2}px`,
+              height: `${3 + seededRandom(i * 67) * 2}px`,
+              background: '#ffffff',
+              borderRadius: '50%',
+              boxShadow: `
+                0 0 ${5 + seededRandom(i * 71) * 8}px #ffffff,
+                0 0 ${10 + seededRandom(i * 73) * 15}px rgba(200, 200, 255, 0.6),
+                0 0 ${20 + seededRandom(i * 79) * 20}px rgba(138, 43, 226, 0.3)
+              `,
+              animation: `twinkleBright ${4 + seededRandom(i * 83) * 4}s ease-in-out infinite`,
+              animationDelay: `${seededRandom(i * 89) * 3}s`,
+            }}
+          />
+        ))}
+      </div>
+      
+      {/* Shooting Stars */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 3,
+        pointerEvents: 'none',
+        overflow: 'hidden',
+      }}>
+        {[...Array(isMobile ? 3 : 5)].map((_, i) => (
+          <div
+            key={`shooting-${i}`}
+            style={{
+              position: 'absolute',
+              top: `${10 + seededRandom(i * 97) * 40}%`,
+              left: '-5%',
+              width: isMobile ? '80px' : '120px',
+              height: '2px',
+              background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 20%, rgba(255,255,255,0.8) 80%, #ffffff 100%)',
+              borderRadius: '2px',
+              transform: 'rotate(-15deg)',
+              animation: `shootingStar ${8 + seededRandom(i * 101) * 12}s linear infinite`,
+              animationDelay: `${seededRandom(i * 103) * 15}s`,
+              opacity: 0,
+              boxShadow: '0 0 6px #fff, 0 0 12px rgba(200, 200, 255, 0.5)',
+            }}
+          />
+        ))}
+      </div>
+      
+      {/* Cosmic Dust Particles */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 2,
+        pointerEvents: 'none',
+      }}>
+        {[...Array(isMobile ? 20 : 40)].map((_, i) => (
+          <div
+            key={`dust-${i}`}
+            style={{
+              position: 'absolute',
+              left: `${seededRandom(i * 107) * 100}%`,
+              top: `${seededRandom(i * 109) * 100}%`,
+              width: '1px',
+              height: '1px',
+              background: 'rgba(255, 255, 255, 0.4)',
+              borderRadius: '50%',
+              animation: `dustFloat ${15 + seededRandom(i * 113) * 20}s linear infinite`,
+              animationDelay: `${seededRandom(i * 127) * 10}s`,
+            }}
+          />
+        ))}
+      </div>
+      
+      {/* Center Glow Behind Avatar */}
+      <div style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: isMobile ? '300px' : '500px',
+        height: isMobile ? '300px' : '500px',
+        background: `
+          radial-gradient(circle at center, rgba(138, 43, 226, 0.15) 0%, rgba(138, 43, 226, 0.08) 30%, transparent 60%),
+          radial-gradient(circle at center, rgba(255, 215, 0, 0.08) 0%, transparent 40%)
+        `,
+        filter: 'blur(30px)',
+        zIndex: 3,
+        pointerEvents: 'none',
+        animation: 'centerGlow 6s ease-in-out infinite',
+      }} />
+
       {/* Bubbles */}
       {bubbles.map(bubble => (
         <Bubble
@@ -1942,41 +2326,60 @@ const SolarSystem = memo(function SolarSystem({ onStartGame }) {
           onPop={handleBubblePop}
         />
       ))}
-
-      {/* Glowing light at center of orbit - CLICKABLE */}
-      <div 
-        onClick={handleSunClick}
-        style={{
-          position: 'absolute',
-          top: isSmallMobile ? '42%' : (isMobile ? '44%' : '46%'),
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: isSmallMobile ? '110px' : (isMobile ? '140px' : '120px'),
-          height: isSmallMobile ? '110px' : (isMobile ? '140px' : '120px'),
-          borderRadius: '50%',
-          background: 'transparent',
-          zIndex: 15,
-          pointerEvents: 'auto',
-          cursor: 'pointer',
-        }} 
-      />
+      
+      {/* Glowing Sun - Top Right Corner - Mass of Light */}
       <div style={{
         position: 'absolute',
-        top: isSmallMobile ? '42%' : (isMobile ? '44%' : '46%'),
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: isSmallMobile ? '100px' : (isMobile ? '130px' : '100px'),
-        height: isSmallMobile ? '100px' : (isMobile ? '130px' : '100px'),
-        borderRadius: '50%',
-        background: '#fff',
-        boxShadow: isSmallMobile 
-          ? '0 0 20px 15px rgba(255, 255, 255, 0.8), 0 0 50px 35px rgba(255, 170, 0, 0.6), 0 0 100px 60px rgba(255, 102, 0, 0.4), 0 0 150px 90px rgba(255, 68, 0, 0.2)'
-          : (isMobile 
-            ? '0 0 25px 20px rgba(255, 255, 255, 0.8), 0 0 60px 45px rgba(255, 170, 0, 0.6), 0 0 120px 80px rgba(255, 102, 0, 0.4), 0 0 180px 110px rgba(255, 68, 0, 0.2)'
-            : '0 0 20px 15px rgba(255, 255, 255, 0.8), 0 0 45px 35px rgba(255, 170, 0, 0.6), 0 0 90px 60px rgba(255, 102, 0, 0.4), 0 0 140px 90px rgba(255, 68, 0, 0.2)'),
-        animation: 'lightGlow 3s ease-in-out infinite',
-        zIndex: 1,
+        top: isSmallMobile ? '-140px' : (isMobile ? '-180px' : '-220px'),
+        right: isSmallMobile ? '-140px' : (isMobile ? '-180px' : '-220px'),
+        width: isSmallMobile ? '200px' : (isMobile ? '280px' : '380px'),
+        height: isSmallMobile ? '200px' : (isMobile ? '280px' : '380px'),
+        background: `
+          radial-gradient(ellipse 40% 50% at 50% 50%, rgba(255,255,255,1) 0%, rgba(255,255,255,0.9) 10%, transparent 50%),
+          radial-gradient(ellipse 60% 40% at 45% 55%, rgba(255,255,200,0.95) 0%, transparent 45%),
+          radial-gradient(ellipse 50% 60% at 55% 45%, rgba(255,250,180,0.9) 0%, transparent 40%),
+          radial-gradient(circle at 50% 50%, rgba(255,215,0,0.8) 0%, rgba(255,180,0,0.6) 20%, rgba(255,140,0,0.4) 40%, rgba(255,100,0,0.2) 60%, transparent 75%)
+        `,
+        filter: 'blur(3px)',
+        zIndex: 5,
         pointerEvents: 'none',
+        animation: 'sunPulse 4s ease-in-out infinite',
+      }}>
+        {/* Inner bright core */}
+        <div style={{
+          position: 'absolute',
+          top: '30%',
+          left: '30%',
+          width: '40%',
+          height: '40%',
+          background: 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,240,0.9) 30%, rgba(255,240,200,0.7) 60%, transparent 100%)',
+          filter: 'blur(8px)',
+          animation: 'sunCorePulse 2s ease-in-out infinite',
+        }} />
+        {/* Secondary glow layer */}
+        <div style={{
+          position: 'absolute',
+          top: '20%',
+          left: '25%',
+          width: '55%',
+          height: '50%',
+          background: 'radial-gradient(ellipse at center, rgba(255,250,220,0.8) 0%, rgba(255,220,150,0.4) 40%, transparent 70%)',
+          filter: 'blur(12px)',
+          transform: 'rotate(-15deg)',
+        }} />
+      </div>
+      {/* Outer glow aura */}
+      <div style={{
+        position: 'absolute',
+        top: isSmallMobile ? '-180px' : (isMobile ? '-240px' : '-300px'),
+        right: isSmallMobile ? '-180px' : (isMobile ? '-240px' : '-300px'),
+        width: isSmallMobile ? '280px' : (isMobile ? '400px' : '520px'),
+        height: isSmallMobile ? '280px' : (isMobile ? '400px' : '520px'),
+        background: 'radial-gradient(circle, rgba(255,200,100,0.3) 0%, rgba(255,150,50,0.15) 30%, rgba(255,100,0,0.08) 50%, transparent 70%)',
+        filter: 'blur(20px)',
+        zIndex: 4,
+        pointerEvents: 'none',
+        animation: 'sunAuraPulse 5s ease-in-out infinite',
       }} />
       
       <Canvas
@@ -1991,6 +2394,7 @@ const SolarSystem = memo(function SolarSystem({ onStartGame }) {
           isMobile={isMobile} 
           isSmallMobile={isSmallMobile}
           onPlanetClick={handlePlanetClick}
+          onAvatarClick={handleAvatarClick}
         />
       </Canvas>
       
@@ -2075,10 +2479,6 @@ const SolarSystem = memo(function SolarSystem({ onStartGame }) {
         {/* Contact Me Button - LEFT */}
         <button
           onClick={() => setShowContact(true)}
-          onMouseEnter={() => setAvatarDirection('left')}
-          onMouseLeave={() => setAvatarDirection('center')}
-          onTouchStart={() => setAvatarDirection('left')}
-          onTouchEnd={() => setTimeout(() => setAvatarDirection('center'), 300)}
           style={{
             padding: isSmallMobile ? '8px 12px' : (isMobile ? '10px 16px' : '12px 24px'),
             fontSize: isSmallMobile ? '8px' : (isMobile ? '9px' : '11px'),
@@ -2109,37 +2509,9 @@ const SolarSystem = memo(function SolarSystem({ onStartGame }) {
           ✨ Contact
         </button>
 
-        {/* Avatar in CENTER - turns towards hovered button */}
-        <div style={{
-          width: isSmallMobile ? '55px' : (isMobile ? '70px' : '100px'),
-          height: isSmallMobile ? '70px' : (isMobile ? '90px' : '120px'),
-          flexShrink: 0,
-        }}>
-          <Canvas
-            camera={{ position: [0, 0.3, 2.2], fov: 60 }}
-            style={{ background: 'transparent' }}
-          >
-            <ambientLight intensity={1.2} />
-            <directionalLight position={[2, 2, 2]} intensity={1.5} />
-            <directionalLight position={[-2, 2, 2]} intensity={1} />
-            <pointLight position={[0, 1, 3]} intensity={0.8} color="#fff" />
-            <Suspense fallback={null}>
-              <ContactAvatar 
-                isMobile={isMobile} 
-                direction={avatarDirection}
-                glowColor={avatarDirection === 'left' ? '#8a2be2' : '#ff6600'}
-              />
-            </Suspense>
-          </Canvas>
-        </div>
-        
         {/* Play Game Button - RIGHT */}
         <button
           onClick={onStartGame}
-          onMouseEnter={() => setAvatarDirection('right')}
-          onMouseLeave={() => setAvatarDirection('center')}
-          onTouchStart={() => setAvatarDirection('right')}
-          onTouchEnd={() => setTimeout(() => setAvatarDirection('center'), 300)}
           style={{
             padding: isSmallMobile ? '8px 12px' : (isMobile ? '10px 16px' : '12px 24px'),
             fontSize: isSmallMobile ? '8px' : (isMobile ? '9px' : '11px'),
@@ -2329,11 +2701,12 @@ const SolarSystem = memo(function SolarSystem({ onStartGame }) {
             
             <p style={{
               margin: '0 0 24px 0',
-              fontSize: isMobile ? '12px' : '14px',
+              fontSize: isMobile ? '11px' : '13px',
               opacity: 0.7,
-              letterSpacing: '2px',
+              letterSpacing: '1px',
+              lineHeight: 1.6,
             }}>
-              Product Designer & UI/UX Developer
+              Product Designer • UX Designer • Frontend Developer • Full Stack Developer
             </p>
             
             {/* Contact Links */}
@@ -2518,6 +2891,12 @@ const SolarSystem = memo(function SolarSystem({ onStartGame }) {
           100% { transform: translate(-50%, -50%) scale(0) translateY(-60px); opacity: 0; }
         }
       `}</style>
+
+      {/* Background Music Control */}
+      <BackgroundMusic isMobile={isMobile} />
+
+      {/* Resume Download Button */}
+      <ResumeDownload isMobile={isMobile} />
 
     </div>
   )

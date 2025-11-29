@@ -138,6 +138,167 @@ button:focus-visible {
   }
 }
 
+@keyframes sunPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 0.92;
+  }
+}
+
+@keyframes sunCorePulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.85;
+  }
+}
+
+@keyframes sunAuraPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+/* Enhanced Background Animations */
+@keyframes nebulaFloat1 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.8;
+  }
+  25% {
+    transform: translate(3%, 2%) scale(1.05);
+  }
+  50% {
+    transform: translate(0, 4%) scale(1.1);
+    opacity: 1;
+  }
+  75% {
+    transform: translate(-2%, 2%) scale(1.05);
+  }
+}
+
+@keyframes nebulaFloat2 {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 0.7;
+  }
+  33% {
+    transform: translate(-3%, -2%) rotate(5deg) scale(1.08);
+    opacity: 0.9;
+  }
+  66% {
+    transform: translate(2%, -3%) rotate(-3deg) scale(1.05);
+    opacity: 1;
+  }
+}
+
+@keyframes nebulaFloat3 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-4%, 3%) scale(1.12);
+  }
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes twinkleBright {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1.3);
+    filter: brightness(1.5);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+    filter: brightness(1.2);
+  }
+  75% {
+    opacity: 1;
+    transform: scale(1.4);
+    filter: brightness(1.6);
+  }
+}
+
+@keyframes shootingStar {
+  0% {
+    transform: translateX(0) rotate(-15deg);
+    opacity: 0;
+  }
+  2% {
+    opacity: 1;
+  }
+  8% {
+    transform: translateX(120vw) rotate(-15deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(120vw) rotate(-15deg);
+    opacity: 0;
+  }
+}
+
+@keyframes dustFloat {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0.2;
+  }
+  25% {
+    transform: translate(20px, -30px);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(40px, -10px);
+    opacity: 0.3;
+  }
+  75% {
+    transform: translate(20px, 20px);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.2;
+  }
+}
+
+@keyframes centerGlow {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.15);
+    opacity: 1;
+  }
+}
+
 /* Hide cursor on touch devices */
 @media (hover: none) and (pointer: coarse) {
   .comet-cursor, .comet-trail {

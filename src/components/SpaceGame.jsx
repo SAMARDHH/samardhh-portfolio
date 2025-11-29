@@ -421,11 +421,14 @@ const SpaceGame = memo(function SpaceGame({ onBack }) {
     
     // Spawn interval decreases from 1500ms to min 600ms over time
     const spawnInterval = Math.max(1500 - gameTime * 30, 600)
+    
+    // Narrower spawn range for mobile to keep asteroids visible
+    const spawnWidth = isMobile ? 4 : 8
 
     const interval = setInterval(() => {
       const newAsteroid = {
         id: asteroidIdRef.current++,
-        x: (Math.random() - 0.5) * 8,
+        x: (Math.random() - 0.5) * spawnWidth,
         speed: baseSpeed + Math.random() * speedVariation,
         colorIndex: Math.floor(Math.random() * 8),
         health: 3,
@@ -434,7 +437,7 @@ const SpaceGame = memo(function SpaceGame({ onBack }) {
     }, spawnInterval)
 
     return () => clearInterval(interval)
-  }, [gameStarted, gameOver, gameTime])
+  }, [gameStarted, gameOver, gameTime, isMobile])
 
   // Auto-shoot for all (mouse and touch)
   useEffect(() => {
@@ -510,11 +513,13 @@ const SpaceGame = memo(function SpaceGame({ onBack }) {
 
   const startGame = () => {
     // Spawn 3 asteroids immediately at different positions
+    // Narrower spawn range for mobile to keep asteroids visible
+    const spawnWidth = isMobile ? 4 : 8
     const initialAsteroids = []
     for (let i = 0; i < 3; i++) {
       initialAsteroids.push({
         id: asteroidIdRef.current++,
-        x: (Math.random() - 0.5) * 8,
+        x: (Math.random() - 0.5) * spawnWidth,
         speed: 0.012 + Math.random() * 0.008,
         colorIndex: Math.floor(Math.random() * 8),
         health: 3,
