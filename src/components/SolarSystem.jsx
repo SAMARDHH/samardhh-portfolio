@@ -834,7 +834,7 @@ const SpaceModal = memo(function SpaceModal({ planet, onClose, isMobile }) {
       left: 0,
       width: '100%',
       height: '100%',
-      zIndex: 100,
+      zIndex: 200,
       opacity: isVisible ? 1 : 0,
       transition: 'opacity 0.3s ease',
       pointerEvents: isVisible ? 'auto' : 'none',
